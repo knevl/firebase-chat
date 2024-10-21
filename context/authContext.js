@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 
-//контекст авторизации
+//контекст авторизации, который хранит пользователя и его состояние
 export const AuthContext = createContext();
 //провайдер контекста авторизации
 export const AuthContextProvider = ({children})=>{
@@ -11,8 +11,12 @@ export const AuthContextProvider = ({children})=>{
 
     useEffect(()=>{
         //onAuthStateChanged
-    },[]
-    )
+
+        //имитация проверки аутентификации
+        setTimeout(()=>{
+            setIsAuthenticated(true);
+        }, 3000);
+    },[])
 
     const login = async (email, password)=>{
         try {
@@ -37,14 +41,14 @@ export const AuthContextProvider = ({children})=>{
             
         }
     }
-
+    //передача данных через контекст чтобы дочерние элементы получили доступ
     return(
         <AuthContext.Provider value={{user, isAuthenticated, login, register, logout}}>
             {children}
         </AuthContext.Provider>
     )
 }
-
+// проверяем, что вызов сделан внутри AuthContext.Provider, возвращаем значения контекста
 export const useAuth = () =>{
     const value = useContext(AuthContext);
 
