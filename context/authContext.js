@@ -3,8 +3,9 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 //контекст авторизации, который хранит пользователя и его состояние
@@ -19,6 +20,7 @@ export const AuthContextProvider = ({ children }) => {
       if (user) {
         setIsAuthenticated(true);
         setUser(user);
+        updateUserData(user.uid);
       } else {
         setIsAuthenticated(false);
         setUser(null);
@@ -27,14 +29,42 @@ export const AuthContextProvider = ({ children }) => {
     return unsub;
   }, []);
 
+  const updateUserData = async (userId) => {
+    const docRef = doc(db, 'users', userId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      let data = docSnap.data();
+      setUser({
+        ...user,
+        username: data.username,
+        profileurl: data.profileurl,
+        userId: data.userId,
+      });
+    }
+  };
+
   const login = async (email, password) => {
     try {
-    } catch (error) {}
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      return { success: true };
+    } catch (error) {
+      let msg = error.message;
+      if (msg.includes('(auth/invalid-email)'))
+        msg = 'Неверный адрес электронной почты';
+      if (msg.includes('(auth/invalid-credential)'))
+        msg = 'Неверные данные аккаунта';
+      return { success: false, msg };
+    }
   };
 
   const logout = async () => {
     try {
-    } catch (error) {}
+      await signOut(auth);
+      return { success: true };
+    } catch (error) {
+      return { success: false, msg: e.message, error: e };
+    }
   };
 
   const register = async (email, password, username, profileurl) => {
@@ -53,7 +83,12 @@ export const AuthContextProvider = ({ children }) => {
       });
       return { success: true, data: response?.user };
     } catch (error) {
-      return { success: false, msg: error.message };
+      let msg = error.message;
+      if (msg.includes('(auth/invalid-email)'))
+        msg = 'Неверный адрес электронной почты';
+      if (msg.includes('(auth/email-already-in-use)'))
+        msg = 'Эта электронная почта уже используется';
+      return { success: false, msg };
     }
   };
   //передача данных через контекст чтобы дочерние элементы получили доступ
