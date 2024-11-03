@@ -53,7 +53,7 @@ export const AuthContextProvider = ({ children }) => {
       if (msg.includes('(auth/invalid-email)'))
         msg = 'Неверный адрес электронной почты';
       if (msg.includes('(auth/invalid-credential)'))
-        msg = 'Неверные данные аккаунта';
+        msg = 'Неверный логин или пароль';
       return { success: false, msg };
     }
   };
