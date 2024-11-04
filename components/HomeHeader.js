@@ -46,7 +46,7 @@ export default function HomeHeader() {
           <MenuTrigger
             customStyles={{
               triggerWrapper: {
-                // trigger wrapper styles
+                // стили
               },
             }}
           >
