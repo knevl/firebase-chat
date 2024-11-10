@@ -9,7 +9,7 @@ export default function ChatList({ users }) {
     <View className='flex-1'>
       <FlatList
         data={users}
-        contentContainerStyle={{ flex: 1, paddingVertical: 25 }}
+        contentContainerStyle={{ flex: 1, paddingVertical: 10 }}
         keyExtractor={(item) => Math.random()}
         showsVerticalScrollIndicator={false}
         renderItem={({ item, index }) => (
