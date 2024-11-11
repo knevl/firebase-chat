@@ -6,3 +6,25 @@ export const getRoomId = (userId1, userId2) => {
   const roomId = sortedIds.join('-');
   return roomId;
 };
+
+export const formatDate = (date) => {
+  var day = date.getDate();
+  var monthNames = [
+    'Янв',
+    'Фев',
+    'Мар',
+    'Апр',
+    'Май',
+    'Июн',
+    'Июл',
+    'Авг',
+    'Сен',
+    'Окт',
+    'Ноя',
+    'Дек',
+  ];
+  var month = monthNames[date.getMonth()];
+
+  var formattedDate = day + ' ' + month;
+  return formattedDate;
+};
